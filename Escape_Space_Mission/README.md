@@ -1,4 +1,4 @@
-# Escape Space Mission
+# Escape Space Mission 👨‍🚀
 
 > In this project I've followed [Mission Python book](https://nostarch.com/missionpython) using Python and Pygame Zero on MacOS to build a simple game with a map to explore and puzzles to solve.
 
@@ -11,11 +11,16 @@
 
 - Soon the link with setup -work in progress-
 
-
 ### ✅ Prerequisites
 - [Python installed](https://www.python.org/downloads/)
 
-
+### 🎮 Game Controls
+- Arrow Keys - Walk in direction
+- Arrow + Spacebar = Interact with item object
+- G = Grab item
+- U = Use item
+- D = Drop item
+- Tab = select inventory item
 
 ## 👩🏻‍💻 Chiara Di Sano (KikiDotPy)
 
