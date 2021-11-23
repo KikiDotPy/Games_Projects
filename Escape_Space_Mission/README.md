@@ -2,12 +2,9 @@
 
 > *Escape Space Mission* is a 2D game with a map to explore and puzzles to solve. Developed by following [Mission Python book](https://nostarch.com/missionpython) using Python and Pygame Zero on MacOS.
 
-
-## 👷🏻 Built with
-    - Python 3.10.0
-    - Pygame Zero 1.2.1
+-screenshot here soon-
   
-### 👨🏻‍🔧 Setup
+### 👨🏻‍🔧 Installing and Play
 
 - Soon the link with setup -work in progress-
 
@@ -21,6 +18,10 @@
 - U = Use item
 - D = Drop item
 - Tab = select inventory item
+
+## 👷🏻 Built with
+    - Python 3.10.0
+    - Pygame Zero 1.2.1
 
 ## 👩🏻‍💻 Chiara Di Sano (KikiDotPy)
 
