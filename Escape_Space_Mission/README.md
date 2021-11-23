@@ -27,4 +27,4 @@
 ### 🤝🏻 Contributions and issues are welcome!
 
 
-###### © Code and sound effects by Sean McManus (www.sean.co.uk) Images by Rafael Pimenta
+###### © Sound effects by Sean McManus (www.sean.co.uk) Images by Rafael Pimenta
