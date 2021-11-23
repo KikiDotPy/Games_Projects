@@ -13,7 +13,7 @@
 
 
 ### ✅ Prerequisites
-- Any IDE installed
+- Python installed
 
 
 
