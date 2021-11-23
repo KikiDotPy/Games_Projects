@@ -10,6 +10,7 @@
 
 ### ✅ Prerequisites
 - [Python installed](https://www.python.org/downloads/)
+- Pygame Zero Installed
 
 ### 🎮 Game Controls
 - Arrow Keys - Walk in direction
