@@ -1,5 +1,7 @@
 # A Python game in space where you need to escape and survive
 
+import pgzrun
+
 # Screen size opening
 WIDTH = 800
 HEIGHT = 600
@@ -33,4 +35,5 @@ def game_loop():
 
 clock.schedule_interval(game_loop, 0.03)
     
-    
+pgzrun.go()
+
