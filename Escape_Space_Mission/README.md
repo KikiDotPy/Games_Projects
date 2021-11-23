@@ -13,7 +13,7 @@
 
 
 ### ✅ Prerequisites
-- Python installed
+- [Python installed](https://www.python.org/downloads/)
 
 
 
