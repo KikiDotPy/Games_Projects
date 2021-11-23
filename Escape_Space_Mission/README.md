@@ -1,6 +1,6 @@
 # Escape Space Mission 👨‍🚀
 
-> In this project I've followed [Mission Python book](https://nostarch.com/missionpython) using Python and Pygame Zero on MacOS to build a simple game with a map to explore and puzzles to solve.
+> ***Escape Space Mission*** is a 2D game with a map to explore and puzzles to solve. Developed by following [Mission Python book](https://nostarch.com/missionpython) using Python and Pygame Zero on MacOS.
 
 
 ## 👷🏻 Built with
