@@ -25,3 +25,6 @@
 
 
 ### 🤝🏻 Contributions and issues are welcome!
+
+© ##### This folder contains the code, images and sounds for the book Mission Python by Sean McManus
+Code and sound effects by Sean McManus (www.sean.co.uk) Images by Rafael Pimenta
