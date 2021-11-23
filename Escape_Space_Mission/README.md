@@ -13,8 +13,7 @@
 
 
 ### ✅ Prerequisites
-- Python 3 IDE installed
-- Pygame Zero installed
+- Any IDE installed
 
 
 
