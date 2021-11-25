@@ -17,7 +17,7 @@
     - Unzip the file
     - Go inside game folder "Escape" and chose between "Pygame for Windows" or "Pygame for MacOS"
     - Run Pygame zero installer
-    - Push any button to close terminal window
+    - Close terminal window
 
 ### ✅ Prerequisites
 - [Python installed](https://www.python.org/downloads/)
