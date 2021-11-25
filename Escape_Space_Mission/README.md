@@ -15,7 +15,7 @@
   ##### Installing Pygame Zero
     - Download game folders (link soon)
     - Unzip the file
-    - Go inside game folder (escape) and chose between "Pygame for Windows" or "Pygame for MacOS"
+    - Go inside game folder "Escape" and chose between "Pygame for Windows" or "Pygame for MacOS"
     - Run Pygame zero installer
 
 ### ✅ Prerequisites
