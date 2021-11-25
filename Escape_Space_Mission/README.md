@@ -6,11 +6,20 @@
   
 ### 👨🏻‍🔧 Installing and Play
 
-- Soon the link with setup -work in progress-
+- Install [Python](https://www.python.org/downloads/)
+- Download game (link soon)
+- Unzip the file
+- Install Pygame Zero inside game folder according to OS used
+- 
+
+##### Installing Pygame Zero
+  - Download game folders (link soon)
+  - Unzip the file
+  - Go inside game folder (escape) and chose between "Pygame for Windows" or "Pygame for MacOS"
+  - Run Pygame zero installer
 
 ### ✅ Prerequisites
 - [Python installed](https://www.python.org/downloads/)
-- Pygame Zero Installed
 
 ### 🎮 Game Controls
 - Arrow Keys - Walk in direction
