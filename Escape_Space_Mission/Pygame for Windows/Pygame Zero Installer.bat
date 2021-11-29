@@ -1,4 +1,4 @@
 @echo [off]
 pip install pgzero
-echo Installing Pygame Zero
+echo Installed Pygame Zero
 pause
