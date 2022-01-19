@@ -30,6 +30,8 @@
 - D = Drop item
 - Tab = select inventory item
 
+- Use objects together = select one in your inventory(TAB) and walk on or into other one(You might need to drop(D) an object from the inventory)
+
 ## 👷🏻 Built with
     - Python 3.10.0
     - Pygame Zero 1.2.1
