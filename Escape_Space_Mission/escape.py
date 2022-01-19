@@ -90,6 +90,12 @@ WHITE = (255, 255, 255)
 GREEN = (0, 255, 0)
 RED = (128, 0, 0)
 
+# Variable to store how much energy and air are left
+air, energy = 100, 100
+# Variable to check if suit or air tank are being repaired
+suit_stitched, air_fixed = False, False
+launch_frame = 0
+
 #########
 ## MAP ##
 #########
@@ -473,6 +479,21 @@ def generate_map():
     top_left_x = center_x - 0.5 * room_pixel_width 
     top_left_y = (center_y - 0.5 * room_pixel_height) + 110
 
+    # Adding props to the room map for the current room
+    for prop_number, prop_info in props.items():
+        # Extracting prop info from prop dictionary
+        prop_room = prop_info[0]
+        prop_y = prop_info[1]
+        prop_x = prop_info[2]
+        if (prop_room == current_room and
+            room_map[prop_y][prop_x] in [0, 39, 2]):
+                room_map[prop_y][prop_x] = prop_number
+                image_here = objects[prop_number][0]
+                image_width = image_here.get_width()
+                image_width_in_tiles = int(image_width / TILE_SIZE)
+                for tile_number in range(1, image_width_in_tiles):
+                    room_map[prop_y][prop_x + tile_number] = 255    
+
 
 #############
 ##GAME LOOP##        
@@ -583,6 +604,31 @@ def game_loop():
         player_frame = 0
         start_room()
         return
+
+    # Keyboard control to pick up items G
+    if keyboard.g:
+        pick_up_object()
+
+    # keyboard control to scroll through inventory TAB
+    if keyboard.tab and len(in_my_pockets) > 0:
+        selected_item += 1
+        if selected_item > len(in_my_pockets) - 1:
+            selected_item = 0
+        item_carrying = in_my_pockets[selected_item]
+        display_inventory()
+        time.sleep(0.2)
+
+    # Keyboard control to drop item D
+    if keyboard.d and item_carrying:
+        drop_object(old_player_y, old_player_x)
+
+    # Keyboard control to examine items SPACE
+    if keyboard.space:
+        examine_object()
+
+    # Keyboard control to use objects U
+    if keyboard.u:
+        use_object()
             
 
     # If PLAYER is standing somewhere they shouldn't, move them back
@@ -715,9 +761,353 @@ def show_text(text_to_show, line_number):
     screen.draw.filled_rect(box, BLACK)
     screen.draw.text(text_to_show,
                      (20, text_lines[line_number]), color=GREEN)
-        
-                
 
+
+#########
+##PROPS##
+#########
+
+# Props are objects that may move between rooms, appear or disappear
+# All props must be set up, props not yet in game go into room 0
+props = {
+    # object number: [room, y, x]
+    20: [31, 0, 4], 21: [26, 0, 1], 22: [41, 0, 2], 23: [39, 0, 5],
+    24: [45, 0, 2],
+    25: [32, 0, 2], 26: [27, 12, 5], # two sides of same door
+    40: [0, 8, 6], 53: [45, 1, 5], 54: [0, 0, 0], 55: [0, 0, 0],
+    56: [0, 0, 0], 57: [35, 4, 6], 58: [0, 0, 0], 59: [31, 1, 7],
+    60: [0, 0, 0], 61: [36, 1, 1], 62: [36, 1, 6], 63: [0, 0, 0],
+    64: [27, 8, 3], 65: [50, 1, 7], 66: [39, 5, 6], 67: [46, 1, 1],
+    68: [0, 0, 0], 69: [30, 3, 3], 70: [47, 1, 3],
+    71: [0, LANDER_Y, LANDER_X], 72: [0, 0, 0], 73: [27, 4, 6], 
+    74: [28, 1, 11], 75: [0, 0, 0], 76: [41, 3, 5], 77: [0, 0, 0],
+    78: [35, 9, 11], 79: [26, 3, 2], 80: [41, 7, 5], 81: [29, 1, 1]
+    }
+
+checksum = 0
+for key, prop in props.items():
+    # 71 is skipped because it's different each game
+    if key != 71:
+        checksum += (prop[0] * key
+                     + prop[1] * (key + 1)
+                     + prop[2] * (key + 2))
+print(len(props), "props")
+assert len(props) == 37, "Expected 37 prop items"
+print("Prop checksum:", checksum)
+assert checksum == 61414, "Error in props data"
+
+
+in_my_pockets = [55]
+selected_item = 0
+item_carrying = in_my_pockets[selected_item]
+
+RECIPES = [
+    [62, 35, 63], [76, 28, 77], [78, 38, 54], [73, 74, 75],
+    [59, 54, 60], [77, 55, 56], [56, 57, 58], [71, 65, 72],
+    [88, 58, 89], [89, 60, 90], [67, 35, 68]
+    ]
+
+checksum = 0
+check_counter = 1
+for recipe in RECIPES:
+    checksum += (recipe[0] * check_counter
+                 + recipe[1] * (check_counter + 1) 
+                 + recipe[2] * (check_counter + 2))
+    check_counter += 3
+print(len(RECIPES), "recipes")
+assert len(RECIPES) == 11, "Expected 11 recipes"
+assert checksum == 37296, "Error in recipes data"
+print("Recipe checksum:", checksum)
+
+
+######################
+##PROPS INTERACTIONS##
+######################
+
+# Function to find the object number going left when it's wide(represented by 255)
+def find_object_start_x():
+    checker_x = player_x
+    while room_map[player_y][checker_x] == 255:
+        checker_x -= 1
+    return checker_x
+
+# Function to find which obect is at the player's position
+def get_item_under_player():
+    item_x = find_object_start_x()
+    item_player_is_on = room_map[player_y][item_x]
+    return item_player_is_on
+
+def pick_up_object():
+    global room_map
+    item_player_is_on = get_item_under_player()
+    if item_player_is_on in items_player_may_carry:
+        room_map[player_y][player_x] = get_floor_type()
+        add_object(item_player_is_on)
+        show_text("Now carrying " + objects[item_player_is_on][3], 0)
+        sounds.pickup.play()
+        time.sleep(0.5)
+    else:
+        show_text("You can't carry that!", 0)
+
+# Function to add item to inventory
+def add_object(item):
+    global selected_item, item_carrying
+    in_my_pockets.append(item)
+    item_carrying = item
+    selected_item = len(in_my_pockets) - 1
+    display_inventory()
+    # Carried object go into room 0(off the map)
+    props[item][0] = 0
+
+# Function to navigate and display inventory
+def display_inventory():
+    box = Rect((0,45), (800,105))
+    screen.draw.filled_rect(box, BLACK)
+
+    # Don't display inventory if not carrying anything
+    if len(in_my_pockets) == 0:
+        return
+    
+    # Showing 16 items at the time
+    start_display = (selected_item // 16) * 16
+    list_to_show = in_my_pockets[start_display: start_display + 16]
+    selected_marker = selected_item % 16
+
+    for item_counter in range(len(list_to_show)):
+        item_number = list_to_show[item_counter]
+        image = objects[item_number][0]
+        screen.blit(image,(25 + (46 * item_counter), 90))
+
+    # Selecting item by drawing a red rectangle around them
+    box_left = (selected_marker * 46) - 3
+    box = Rect((22 + box_left, 85), (40, 40))
+    screen.draw.rect(box, WHITE)
+    item_highlighted = in_my_pockets[selected_item]
+    description = objects[item_highlighted][2]
+    screen.draw.text(description, (20, 130), color="white")
+
+def drop_object(old_y, old_x):
+    global room_maps, props
+    # Places where it's possible to drop items
+    if room_map[old_y][old_x] in [0, 2, 39]:
+        props[item_carrying][0] = current_room
+        props[item_carrying][1] = old_y
+        props[item_carrying][2] = old_x
+        room_map[old_y][old_x] = item_carrying
+        show_text("You have dropped " + objects[item_carrying][3], 0)
+        sounds.drop.play()
+        remove_object(item_carrying)
+        time.sleep(0.5)
+    # If there is already a prop there
+    else:
+        show_text("You can't drop that here.", 0)
+        time.sleep(0.5)
+
+# Function that takes item out of inventory
+def remove_object(item):
+    global selected_item, in_my_pockets, item_carrying
+    in_my_pockets.remove(item)
+    selected_item = selected_item - 1
+    if selected_item < 0:
+        selected_item = 0
+    if len(in_my_pockets) == 0: # If they're not carrying anything
+        item_carrying = False # Set item_carrying to False
+    # Otherwise set it to the new selected item
+    else: 
+        item_carrying = in_my_pockets[selected_item]
+    display_inventory()
+
+# Function to examine items and show their long desciption
+def examine_object():
+    item_player_is_on = get_item_under_player()
+    left_tile_of_item = find_object_start_x()
+    # Avoiding describe the floor tiles
+    if item_player_is_on in [0, 2]:
+        return
+    description = "You see: " + objects[item_player_is_on][2]
+    for prop_number, details in props.items():
+        # props = object number: [room number, y, x]
+        if details[0] == current_room: # if prop is in the room
+            # If prop is hidden (= at player's location but not on map)
+            if (details[1] == player_y
+                and details[2] == left_tile_of_item 
+                and room_map[details[1]][details[2]] != prop_number):
+                add_object(prop_number)
+                description = "You found " + objects[prop_number][3]
+                sounds.combine.play()
+    show_text(description, 0)
+    time.sleep(0.5)
+
+###############
+##USE OBJECTS##
+###############
+
+def use_object():
+    global room_map, props, item_carrying, air, selected_item, energy
+    global in_my_pockets, suit_stitched, air_fixed, game_over
+
+    use_message = "You fiddle around with it but don't get anywhere."
+    standard_responses = {
+        4: "Air is running out! You can't take this lying down!",
+        6: "This is no time to sit around!",
+        7: "This is no time to sit around!",
+        32: "It shakes and rumbles, but nothing else happens.",
+        34: "Ah! That's better. Now wash your hands.",
+        35: "You wash your hands and shake the water off.",
+        37: "The test tubes smoke slightly as you shake them.",
+        54: "You chew the gum. It's sticky like glue.",
+        55: "The yoyo bounces up and down, slightly slower than on Earth",
+        56: "It's a bit too fiddly. Can you thread it on something?",
+        59: "You need to fix the leak before you can use the canister",
+        61: "You try signalling with the mirror, but nobody can see you.",
+        62: "Don't throw resources away. Things might come in handy...",
+        67: "To enjoy yummy space food, just add water!",
+        75: "You are at Sector: " + str(current_room) + " // X: " \
+            + str(player_x) + " // Y: " + str(player_y)  
+        }
+
+    # Get object number at player's location.
+    item_player_is_on = get_item_under_player()
+    for this_item in [item_player_is_on, item_carrying]:
+        if this_item in standard_responses:
+            use_message = standard_responses[this_item]
+
+    if item_carrying == 70 or item_player_is_on == 70:
+        use_message = "Banging tunes!"
+        sounds.steelmusic.play(2)
+
+    elif item_player_is_on == 11:
+        use_message = "AIR: " + str(air) + \
+                      "% / ENERGY " + str(energy) + "% / "
+        if not suit_stitched:
+            use_message += "*ALERT* SUIT FABRIC TORN / "
+        if not air_fixed:
+            use_message += "*ALERT* SUIT AIR BOTTLE MISSING"
+        if suit_stitched and air_fixed:
+            use_message += " SUIT OK"
+        show_text(use_message, 0)
+        sounds.say_status_report.play()
+        time.sleep(0.5)
+        # If "on" the computer, player intention is clearly status update.
+        # Return to stop another object use accidentally overriding this.
+        return
+
+    elif item_carrying == 60 or item_player_is_on == 60: 
+        use_message = "You fix " + objects[60][3] + " to the suit"
+        air_fixed = True
+        air = 90 
+        air_countdown()
+        remove_object(60)
+
+    elif (item_carrying == 58 or item_player_is_on == 58) \
+       and not suit_stitched:
+        use_message = "You use " + objects[56][3] + \
+                      " to repair the suit fabric"
+        suit_stitched = True
+        remove_object(58)
+
+    elif item_carrying == 72 or item_player_is_on == 72: 
+        use_message = "You radio for help. A rescue ship is coming. \
+Rendezvous Sector 13, outside."
+        props[40][0] = 13 
+
+    elif (item_carrying == 66 or item_player_is_on == 66) \
+            and current_room in outdoor_rooms:
+        use_message = "You dig..."
+        if (current_room == LANDER_SECTOR
+            and player_x == LANDER_X 
+            and player_y == LANDER_Y):
+            add_object(71)
+            use_message = "You found the Poodle lander!"
+
+    elif item_player_is_on == 40:
+        clock.unschedule(air_countdown)
+        show_text("Congratulations, "+ PLAYER_NAME +"!", 0)
+        show_text("Mission success! You have made it to safety.", 1)
+        game_over = True
+        sounds.take_off.play()
+        game_completion_sequence()
+
+    elif item_player_is_on == 16:
+        energy += 1
+        if energy > 100:
+            energy = 100
+        use_message = "You munch the lettuce and get a little energy back"
+        draw_energy_air()        
+
+    elif item_player_is_on == 42:
+        if current_room == 27:
+            open_door(26)
+        props[25][0] = 0 # Door from RM32 to engineering bay
+        props[26][0] = 0 # Door inside engineering bay
+        clock.schedule_unique(shut_engineering_door, 60)
+        use_message = "You press the button"
+        show_text("Door to engineering bay is open for 60 seconds", 1)
+        sounds.say_doors_open.play()
+        sounds.doors.play()
+
+    elif item_carrying == 68 or item_player_is_on == 68:
+        energy = 100
+        use_message = "You use the food to restore your energy"
+        remove_object(68)
+        draw_energy_air()
+
+    if suit_stitched and air_fixed: # open airlock access
+        if current_room == 31 and props[20][0] == 31:
+            open_door(20) # which includes removing the door
+            sounds.say_airlock_open.play()
+            show_text("The computer tells you the airlock is now open.", 1)
+        elif props[20][0] == 31:
+            props[20][0] = 0 # remove door from map
+            sounds.say_airlock_open.play()
+            show_text("The computer tells you the airlock is now open.", 1)
+
+    for recipe in RECIPES:
+        ingredient1 = recipe[0]
+        ingredient2 = recipe[1]
+        combination = recipe[2]
+        if (item_carrying == ingredient1
+            and item_player_is_on == ingredient2) \
+            or (item_carrying == ingredient2
+                and item_player_is_on == ingredient1):
+            use_message = "You combine " + objects[ingredient1][3] \
+                          + " and " + objects[ingredient2][3] \
+                          + " to make " + objects[combination][3]
+            if item_player_is_on in props.keys(): 
+                props[item_player_is_on][0] = 0 
+                room_map[player_y][player_x] = get_floor_type()
+            in_my_pockets.remove(item_carrying)
+            add_object(combination)
+            sounds.combine.play()
+
+    show_text(use_message, 0)
+    time.sleep(0.5)
+
+def game_completion_sequence():
+    global launch_frame #(initial value is 0, set up in VARIABLES section)
+    box = Rect((0, 150), (800, 600))
+    screen.draw.filled_rect(box, (128, 0, 0))
+    box = Rect ((0, top_left_y - 30), (800, 390))
+    screen.surface.set_clip(box)
+
+    for y in range(0, 13):
+        for x in range(0, 13):
+            draw_image(images.soil, y, x)
+
+    launch_frame += 1
+    if launch_frame < 9:
+        draw_image(images.rescue_ship, 8 - launch_frame, 6)
+        draw_shadow(images.rescue_ship_shadow, 8 + launch_frame, 6)
+        clock.schedule(game_completion_sequence, 0.25)
+    else:
+        screen.surface.set_clip(None)
+        screen.draw.text("MISSION", (200, 380), color = "white",
+                     fontsize = 128, shadow = (1, 1), scolor = "black")
+        screen.draw.text("COMPLETE", (145, 480), color = "white",
+                     fontsize = 128, shadow = (1, 1), scolor = "black")
+        sounds.completion.play()
+        sounds.say_mission_complete.play()
+    
 #########
 ##START##
 #########
@@ -725,3 +1115,4 @@ def show_text(text_to_show, line_number):
 generate_map()
 clock.schedule_interval(game_loop, 0.03)
 clock.schedule_interval(adjust_wall_transparency, 0.05)
+clock.schedule_unique(display_inventory, 1)
