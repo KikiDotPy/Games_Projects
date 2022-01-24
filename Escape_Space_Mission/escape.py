@@ -1118,6 +1118,103 @@ def game_completion_sequence():
                      fontsize = 128, shadow = (1, 1), scolor = "black")
         sounds.completion.play()
         sounds.say_mission_complete.play()
+
+#########
+##DOORS##
+#########
+        
+def open_door(opening_door_number):
+    global door_frames, door_shadow_frames
+    global door_frame_number, door_object_number
+    door_frames = [images.door1, images.door2, images.door3,
+                   images.door4, images.floor]
+    # (Final frame restores shadow ready for when door reappears).
+    door_shadow_frames = [images.door1_shadow, images.door2_shadow,
+                          images.door3_shadow, images.door4_shadow,
+                          images.door_shadow]
+    door_frame_number = 0
+    door_object_number = opening_door_number
+    do_door_animation()
+
+def close_door(closing_door_number):
+    global door_frames, door_shadow_frames
+    global door_frame_number, door_object_number, player_y
+    door_frames = [images.door4, images.door3, images.door2,
+                   images.door1, images.door]
+    door_shadow_frames = [images.door4_shadow, images.door3_shadow,
+                          images.door2_shadow, images.door1_shadow,
+                          images.door_shadow]
+    door_frame_number = 0
+    door_object_number = closing_door_number
+    # If player is in same row as a door, they must be in open doorway
+    if player_y == props[door_object_number][1]:
+        if player_y == 0: # if in the top doorway
+            player_y = 1 # move them down
+        else:
+            player_y = room_height - 2 # move them up
+    do_door_animation()
+    
+def open_door(opening_door_number):
+    global door_frames, door_shadow_frames
+    global door_frame_number, door_object_number
+    door_frames = [images.door1, images.door2, images.door3,
+                   images.door4, images.floor]
+    # (Final frame restores shadow ready for when door reappears).
+    door_shadow_frames = [images.door1_shadow, images.door2_shadow,
+                          images.door3_shadow, images.door4_shadow,
+                          images.door_shadow]
+    door_frame_number = 0
+    door_object_number = opening_door_number
+    do_door_animation()
+
+def close_door(closing_door_number):
+    global door_frames, door_shadow_frames
+    global door_frame_number, door_object_number, player_y
+    door_frames = [images.door4, images.door3, images.door2,
+                   images.door1, images.door]
+    door_shadow_frames = [images.door4_shadow, images.door3_shadow,
+                          images.door2_shadow, images.door1_shadow,
+                          images.door_shadow]
+    door_frame_number = 0
+    door_object_number = closing_door_number
+    # If player is in same row as a door, they must be in open doorway
+    if player_y == props[door_object_number][1]:
+        if player_y == 0: # if in the top doorway
+            player_y = 1 # move them down
+        else:
+            player_y = room_height - 2 # move them up
+    do_door_animation()
+
+def do_door_animation():
+    global door_frames, door_frame_number, door_object_number, objects
+    objects[door_object_number][0] = door_frames[door_frame_number]
+    objects[door_object_number][1] = door_shadow_frames[door_frame_number]
+    door_frame_number += 1
+    if door_frame_number == 5: 
+        if door_frames[-1] == images.floor:
+            props[door_object_number][0] = 0 # remove door from props list
+        # Regenerate room map from the props
+        # to put the door in the room if required.
+        generate_map() 
+    else:
+        clock.schedule(do_door_animation, 0.15)
+
+
+def do_door_animation():
+    global door_frames, door_frame_number, door_object_number, objects
+    objects[door_object_number][0] = door_frames[door_frame_number]
+    objects[door_object_number][1] = door_shadow_frames[door_frame_number]
+    door_frame_number += 1
+    if door_frame_number == 5: 
+        if door_frames[-1] == images.floor:
+            props[door_object_number][0] = 0 # remove door from props list
+        # Regenerate room map from the props
+        # to put the door in the room if required.
+        generate_map() 
+    else:
+        clock.schedule(do_door_animation, 0.15)
+
+
     
 #########
 ##START##
