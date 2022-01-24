@@ -1080,8 +1080,19 @@ Rendezvous Sector 13, outside."
             add_object(combination)
             sounds.combine.play()
 
+    # {key object number: door object number}
+    ACCESS_DICTIONARY = { 79:22, 80:23, 81:24 }
+    if item_carrying in ACCESS_DICTIONARY:
+        door_number = ACCESS_DICTIONARY[item_carrying]
+        if props[door_number][0] == current_room:
+            use_message = "You unlock the door!"
+            sounds.say_doors_open.play()
+            sounds.doors.play()
+            open_door(door_number)
+
     show_text(use_message, 0)
     time.sleep(0.5)
+
 
 def game_completion_sequence():
     global launch_frame #(initial value is 0, set up in VARIABLES section)
