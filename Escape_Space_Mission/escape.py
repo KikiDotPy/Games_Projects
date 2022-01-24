@@ -500,7 +500,12 @@ def generate_map():
 #############
 
 def start_room():
+    global airlock_door_frame
     show_text("You are here: " + room_name, 0)
+    # Room with self-shutting airlock door
+    if current_room == 26:
+        airlock_door_frame = 0
+        clock.schedule_interval(door_in_room_26, 0.05)
 
 def game_loop():
     global player_x, player_y, current_room
@@ -629,7 +634,18 @@ def game_loop():
     # Keyboard control to use objects U
     if keyboard.u:
         use_object()
-            
+
+
+    ## Teleporter for testing, remove after finishing
+    if keyboard.x:
+        current_room = int(input("Enter room number:"))
+        player_x = 2
+        player_y = 2
+        generate_map()
+        start_room()
+        sounds.teleport.play()
+    ## Teleport section ends
+         
 
     # If PLAYER is standing somewhere they shouldn't, move them back
     if room_map[player_y][player_x] not in items_player_may_stand_on: #\
@@ -1214,7 +1230,54 @@ def do_door_animation():
     else:
         clock.schedule(do_door_animation, 0.15)
 
+def shut_engineering_door():
+    global current_room, door_room_number, props
+    props[25][0] = 32 # Door from room 32 to the engineering bay.
+    props[26][0] = 27 # Door inside engineering bay.
+    generate_map() # Add door to room_map for if in affected room.
+    if current_room == 27:
+        close_door(26)
+    if current_room == 32:
+        close_door(25)
+    show_text("The computer tells you the doors are closed.", 1)
+    sounds.say_doors_closed.play()
 
+def door_in_room_26():
+    global airlock_door_frame, room_map
+    frames = [images.door, images.door1, images.door2,
+              images.door3,images.door4, images.floor
+              ]
+
+    shadow_frames = [images.door_shadow, images.door1_shadow,
+                     images.door2_shadow, images.door3_shadow,
+                     images.door4_shadow, None]
+
+    if current_room != 26:
+        clock.unschedule(door_in_room_26)
+        return
+
+    # prop 21 is the door in Room 26.
+    if ((player_y == 8 and player_x == 2) or props[63] == [26, 8, 2]) \
+            and props[21][0] == 26:
+        airlock_door_frame += 1
+        if airlock_door_frame == 5:
+            props[21][0] = 0 # Remove door from map when fully open.
+            room_map[0][1] = 0
+            room_map[0][2] = 0
+            room_map[0][3] = 0
+
+    if ((player_y != 8 or player_x != 2) and props[63] != [26, 8, 2]) \
+            and airlock_door_frame > 0:
+        if airlock_door_frame == 5:
+            # Add door to props and map so animation is shown.
+            props[21][0] = 26
+            room_map[0][1] = 21
+            room_map[0][2] = 255
+            room_map[0][3] = 255
+        airlock_door_frame -= 1
+
+    objects[21][0] = frames[airlock_door_frame]
+    objects[21][1] = shadow_frames[airlock_door_frame]    
     
 #########
 ##START##
