@@ -10,8 +10,6 @@
 * [Download game](https://drive.google.com/drive/folders/1C75NhUBE29wrauxHRF9YdiNBxDjtTYgC?usp=sharing) by clickind "Download" on top right corner
 * Unzip the file
 * Install Pygame Zero (Instruction below)
-* Run the game through terminal/command prompt (instruction below)
-
    <details><summary><strong>Installing Pygame Zero</strong></summary>
     <ul>
       <li><a href="https://drive.google.com/drive/folders/1C75NhUBE29wrauxHRF9YdiNBxDjtTYgC?usp=sharing">Download game</a> by clickind "Download" on top right corner</li>
@@ -21,6 +19,7 @@
       <li>Close terminal window</li>
   </ul>
   </details>
+* Run the game through terminal/command prompt (instruction below)
      <details><summary><strong>Run game on MacOS</strong></summary>
     <ul>
       <li><a href="https://drive.google.com/drive/folders/1C75NhUBE29wrauxHRF9YdiNBxDjtTYgC?usp=sharing">Download game</a> by clickind "Download" on top right corner</li>
