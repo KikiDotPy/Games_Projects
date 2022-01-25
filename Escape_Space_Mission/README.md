@@ -7,7 +7,7 @@
 ### 👨🏻‍🔧 Installing and Play
 
 * Install [Python](https://www.python.org/downloads/)
-* [Download game](https://drive.google.com/drive/folders/1C75NhUBE29wrauxHRF9YdiNBxDjtTYgC?usp=sharing) by clickind "Download" on top right corner
+* [Download game](https://drive.google.com/drive/folders/1C75NhUBE29wrauxHRF9YdiNBxDjtTYgC?usp=sharing) by clicking *_Download_* icon on top right corner
 * Unzip the file
 * Install Pygame Zero (Instruction below)
    <details><summary><strong>Installing Pygame Zero</strong></summary>
@@ -34,11 +34,12 @@
   <details><summary><strong>Run game on Windows</strong></summary>
   <ul>
     <li>Install the game by following the instructions above</li>
+    <li>Navigate to t</li>
     <li></li>
     <li></li>
-    <li></li>
-    <li></li>
+    <li>Enjoy the game!</li>
   </ul>
+  <sub>For any issue contact me on <a href="https://twitter.com/KikiDotPy">Twitter</a>, I'll gladly help!</sub>
   </details>
 
 ### ✅ Prerequisites
