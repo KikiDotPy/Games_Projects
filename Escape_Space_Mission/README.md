@@ -29,7 +29,7 @@
       <li>Copy and paste into Terminal: <strong>pgzrun escape.py</strong></li>
       <li>Enjoy the game!</li>
   </ul>
-  <sub>For any issue contact me on <a href="https://twitter.com/KikiDotPy">Twitter</a></sub>
+  <sub>For any issue contact me on <a href="https://twitter.com/KikiDotPy">Twitter</a>, I'll gladly help!</sub>
   </details>
   <details><summary><strong>Run game on Windows</strong></summary>
   <ul>
