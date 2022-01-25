@@ -12,12 +12,14 @@
 - Install Pygame Zero (Instruction below)
 - Run the game through terminal/command prompt (instruction below)
 
-   ##### Installing Pygame Zero
+   <details><summary>Installing Pygame Zero</summary>
+  <p>
     - [Download game](https://drive.google.com/drive/folders/1C75NhUBE29wrauxHRF9YdiNBxDjtTYgC?usp=sharing) by clickind "Download" on top right corner
     - Unzip the file
     - Go inside game folder "Escape" and chose between "Pygame for Windows" or "Pygame for MacOS"
     - Run Pygame zero installer OR type in Terminal (MacOS) or cmd (Windows) "pip install pgz"
     - Close terminal window
+  </p></details>
 
 ### ✅ Prerequisites
 - [Python installed](https://www.python.org/downloads/)
