@@ -28,8 +28,8 @@
       <li>Select <strong><em>New Terminal at folder</em></strong></li>
       <li>Copy and paste into Terminal: <strong>pgzrun escape.py</strong></li>
       <li>Enjoy the game!</li>
-      <sub>For any incovenience</sub>
   </ul>
+  <sub>For any issue contact me at</sub>
   </details>
   <details><summary><strong>Run game on Windows</strong></summary>
   <ul>
