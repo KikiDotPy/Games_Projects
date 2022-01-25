@@ -10,7 +10,7 @@
 - [Download game](https://drive.google.com/drive/folders/1C75NhUBE29wrauxHRF9YdiNBxDjtTYgC?usp=sharing) by clickind "Download" on top right corner
 - Unzip the file
 - Install Pygame Zero (Instruction below)
-- 
+- Run the game through terminal/command prompt (instruction below)
 
   ##### Installing Pygame Zero
     - [Download game](https://drive.google.com/drive/folders/1C75NhUBE29wrauxHRF9YdiNBxDjtTYgC?usp=sharing) by clickind "Download" on top right corner
