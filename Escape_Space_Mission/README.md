@@ -34,7 +34,7 @@
   <details><summary><strong>Run game on Windows</strong></summary>
   <ul>
     <li>Install the game by following the instructions above</li>
-    <li>Navigate to the game folder (<em>Escape Space Mission</em>)</li>
+    <li>Navigate into the game folder (<em>Escape Space Mission</em>)</li>
     <li>Click the long bar above your files and type <strong>cmd</strong> and press <strong>ENTER</strong></li>
     <li>The command line will open, copy and paste into it: <strong>pgzrun escape.py</strong></li>
     <li>Enjoy the game!</li>
