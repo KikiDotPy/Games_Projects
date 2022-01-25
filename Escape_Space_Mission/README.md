@@ -23,10 +23,10 @@
      <details><summary><strong>Run game on MacOS</strong></summary>
     <ul>
       <li>Install the game by following the instructions above</li>
-      <li>Navigate to the game folder has been downloaded</li>
+      <li>Navigate to the folder where the game has been unzipped</li>
       <li>Right-click on <strong><em>Escape Space Mission</em></strong> folder</li>
       <li>Select <strong><em>New Terminal at folder</em></strong></li>
-      <li>Copy and paste into Terminal: <strong>pgzrun escape.py</strong></li>
+      <li>The Terminal will open, copy and paste into Terminal: <strong>pgzrun escape.py</strong></li>
       <li>Enjoy the game!</li>
   </ul>
   <sub>For any issue contact me on <a href="https://twitter.com/KikiDotPy">Twitter</a>, I'll gladly help!</sub>
@@ -34,9 +34,9 @@
   <details><summary><strong>Run game on Windows</strong></summary>
   <ul>
     <li>Install the game by following the instructions above</li>
-    <li>Navigate to t</li>
-    <li></li>
-    <li></li>
+    <li>Navigate to the game folder (<em>Escape Space Mission</em>)</li>
+    <li>Click the long bar above your files and type <strong>cmd</strong> and press <strong>ENTER</strong></li>
+    <li>The command line will open, copy and paste into it: <strong>pgzrun escape.py</strong></li>
     <li>Enjoy the game!</li>
   </ul>
   <sub>For any issue contact me on <a href="https://twitter.com/KikiDotPy">Twitter</a>, I'll gladly help!</sub>
