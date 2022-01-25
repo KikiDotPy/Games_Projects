@@ -14,8 +14,8 @@
     <ul>
       <li><a href="https://drive.google.com/drive/folders/1C75NhUBE29wrauxHRF9YdiNBxDjtTYgC?usp=sharing">Download game</a> by clickind <strong><em>Download</em></strong> icon on top right corner</li>
       <li>Unzip the file</li>
-      <li>Go inside game folder "Escape" and chose between "Pygame for Windows" or "Pygame for MacOS"</li>
-      <li>Run Pygame zero installer <strong>OR</strong> type in Terminal (MacOS) or cmd (Windows) "pip install pgz"</li>
+      <li>Go inside game folder <strong><em>Escape</strong></em> and chose between <strong><em>Pygame for Windows</strong></em> or <strong><em>Pygame for MacOS</strong></em></li>
+      <li>Run Pygame zero installer <strong>OR</strong> type in Terminal (MacOS) or cmd (Windows) <strong><em>pip install pgz</strong></em></li>
       <li>Close terminal window</li>
   </ul>
   </details>
