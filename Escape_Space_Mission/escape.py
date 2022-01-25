@@ -494,7 +494,10 @@ def generate_map():
                 for tile_number in range(1, image_width_in_tiles):
                     room_map[prop_y][prop_x + tile_number] = 255    
 
-
+    hazard_map = [] # empty list
+    for y in range(room_height):
+        hazard_map.append( [0] * room_width )
+        
 #############
 ##GAME LOOP##        
 #############
@@ -506,6 +509,7 @@ def start_room():
     if current_room == 26:
         airlock_door_frame = 0
         clock.schedule_interval(door_in_room_26, 0.05)
+    hazard_start()
 
 def game_loop():
     global player_x, player_y, current_room
@@ -561,7 +565,7 @@ def game_loop():
 # Check for exiting the room
 # Through door on the RIGHT side
     if player_x == room_width:
-        #clock.unschedule(hazard_move)
+        clock.unschedule(hazard_move)
         current_room += 1
         generate_map()
         # Entering next room at left side
@@ -574,7 +578,7 @@ def game_loop():
 
     # Through door on the LEFT side
     if player_x == -1:
-        #clock.unschedule(hazard_move)
+        clock.unschedule(hazard_move)
         current_room -= 1
         generate_map()
         # Entering next room at right side
@@ -587,7 +591,7 @@ def game_loop():
 
     # Through door at BOTTOM
     if player_y == room_height:
-        #clock.unschedule(hazard_move)
+        clock.unschedule(hazard_move)
         current_room += MAP_WIDTH
         generate_map()
         # Entering next room at top
@@ -600,7 +604,7 @@ def game_loop():
 
     # Through door at TOP
     if player_y == -1:
-        #clock.unschedule(hazard_move)
+        clock.unschedule(hazard_move)
         current_room -= MAP_WIDTH
         generate_map()
         # Entering next room at bottom
@@ -637,23 +641,26 @@ def game_loop():
 
 
     ## Teleporter for testing, remove after finishing
-    if keyboard.x:
-        current_room = int(input("Enter room number:"))
-        player_x = 2
-        player_y = 2
-        generate_map()
-        start_room()
-        sounds.teleport.play()
+    #if keyboard.x:
+        #current_room = int(input("Enter room number:"))
+        #player_x = 2
+        #player_y = 2
+        #generate_map()
+        #start_room()
+        #sounds.teleport.play()
     ## Teleport section ends
          
 
     # If PLAYER is standing somewhere they shouldn't, move them back
-    if room_map[player_y][player_x] not in items_player_may_stand_on: #\
-        #or hazard_map[player_y][player_x] != 0:
+    if room_map[player_y][player_x] not in items_player_may_stand_on\
+            or hazard_map[player_y][player_x] != 0:
         player_x = old_player_x
         player_y = old_player_y
         player_frame = 0
-
+    # Toxic floor damage
+    if room_map[player_y][player_x] == 48:
+        deplete_energy(1)
+        
     if player_direction == "right" and player_frame > 0:
         player_offset_x = -1 + (0.25 * player_frame)
     if player_direction == "left" and player_frame > 0:
@@ -746,7 +753,11 @@ def draw():
                             draw_shadow(shadow_image, y, x+z)
                     else:
                         draw_shadow(shadow_image, y, x)
-                
+
+            hazard_here = hazard_map[y][x]
+            if hazard_here != 0: # If there's a hazard at this position
+                draw_image(objects[hazard_here][0], y, x)
+                 
         if (player_y == y):
                 draw_player()
 
@@ -1277,7 +1288,155 @@ def door_in_room_26():
         airlock_door_frame -= 1
 
     objects[21][0] = frames[airlock_door_frame]
-    objects[21][1] = shadow_frames[airlock_door_frame]    
+    objects[21][1] = shadow_frames[airlock_door_frame]
+
+#######
+##AIR##
+#######
+
+def draw_energy_air():
+    box = Rect((20, 765), (350, 20))
+    screen.draw.filled_rect(box, BLACK)
+    screen.draw.text("AIR", (20, 766), color=BLUE)
+    screen.draw.text("ENERGY", (180, 766), color=YELLOW)
+
+    if air > 0:
+        box = Rect((50, 765), (air, 20))
+        screen.draw.filled_rect(box, BLUE) # Draw new air bar.
+
+    if energy > 0:
+        box = Rect((250, 765), (energy, 20))
+        screen.draw.filled_rect(box, YELLOW) # Draw new energy bar.
+
+def end_the_game(reason):
+    global game_over
+    show_text(reason, 1)
+    game_over = True
+    sounds.say_mission_fail.play()
+    sounds.gameover.play()
+    screen.draw.text("GAME OVER", (120, 400), color = "white",
+                     fontsize = 128, shadow = (1, 1), scolor = "black")
+    
+def air_countdown():
+    global air, game_over
+    if game_over:
+        return # Don't sap air when they're already dead.
+    air -= 1
+    if air == 20:
+        sounds.say_air_low.play()
+    if air == 10:
+        sounds.say_act_now.play()
+    draw_energy_air()
+    if air < 1:
+        end_the_game("You're out of air!")
+
+def alarm():
+    show_text("Air is running out, " + PLAYER_NAME
+              + "! Get to safety, then radio for help!", 1)
+    sounds.alarm.play(3)
+    sounds.say_breach.play()    
+
+###########
+##HAZARDS##
+###########
+
+hazard_data = {
+    # room number: [[y, x, direction, bounce addition to direction]]
+    28: [[1, 8, 2, 1], [7, 3, 4, 1]], 32: [[1, 5, 4, -1]],
+    34: [[5, 1, 1, 1], [5, 5, 1, 2]], 35: [[4, 4, 1, 2], [2, 5, 2, 2]],
+    36: [[2, 1, 2, 2]], 38: [[1, 4, 3, 2], [5, 8, 1, 2]],
+    40: [[3, 1, 3, -1], [6, 5, 2, 2], [7, 5, 4, 2]],
+    41: [[4, 5, 2, 2], [6, 3, 4, 2], [8, 1, 2, 2]],
+    42: [[2, 1, 2, 2], [4, 3, 2, 2], [6, 5, 2, 2]],
+    46: [[2, 1, 2, 2]],
+    48: [[1, 8, 3, 2], [8, 8, 1, 2], [3, 9, 3, 2]]
+    }
+
+def deplete_energy(penalty):
+    global energy, game_over
+    if game_over:
+        return # Don't sap energy when they're already dead.
+    energy = energy - penalty
+    draw_energy_air()
+    if energy < 1:
+        end_the_game("You're out of energy!")
+
+def hazard_start():
+    global current_room_hazards_list, hazard_map
+    if current_room in hazard_data.keys():
+        current_room_hazards_list = hazard_data[current_room]
+        for hazard in current_room_hazards_list:
+            hazard_y = hazard[0]
+            hazard_x = hazard[1]
+            hazard_map[hazard_y][hazard_x] = 49 + (current_room % 3)
+        clock.schedule_interval(hazard_move, 0.15)
+
+def hazard_move():
+    global current_room_hazards_list, hazard_data, hazard_map
+    global old_player_x, old_player_y
+
+    if game_over:
+        return
+    
+    for hazard in current_room_hazards_list:
+        hazard_y = hazard[0]
+        hazard_x = hazard[1]
+        hazard_direction = hazard[2]
+        
+        old_hazard_x = hazard_x
+        old_hazard_y = hazard_y
+        hazard_map[old_hazard_y][old_hazard_x] = 0 
+            
+        if hazard_direction == 1: # up
+            hazard_y -= 1
+        if hazard_direction == 2: # right
+            hazard_x += 1
+        if hazard_direction == 3: # down
+            hazard_y += 1
+        if hazard_direction == 4: # left
+            hazard_x -= 1
+
+        hazard_should_bounce = False
+
+        if (hazard_y == player_y and hazard_x == player_x) or \
+           (hazard_y == from_player_y and hazard_x == from_player_x
+            and player_frame > 0):
+            sounds.ouch.play()
+            deplete_energy(10)
+            hazard_should_bounce = True
+
+        # Stop hazard going out of the doors
+        if hazard_x == room_width: 
+            hazard_should_bounce = True
+            hazard_x = room_width - 1
+        if hazard_x == -1: 
+            hazard_should_bounce = True
+            hazard_x = 0
+        if hazard_y == room_height:
+            hazard_should_bounce = True
+            hazard_y = room_height - 1
+        if hazard_y == -1:
+            hazard_should_bounce = True
+            hazard_y = 0
+
+        # Stop when hazard hits scenery or another hazard.
+        if room_map[hazard_y][hazard_x] not in items_player_may_stand_on \
+               or hazard_map[hazard_y][hazard_x] != 0:
+            hazard_should_bounce = True
+
+        if hazard_should_bounce:
+            hazard_y = old_hazard_y # Move back to last valid position.
+            hazard_x = old_hazard_x
+            hazard_direction += hazard[3]
+            if hazard_direction > 4:
+                hazard_direction -= 4
+            if hazard_direction < 1:
+                hazard_direction += 4
+            hazard[2] = hazard_direction
+
+        hazard_map[hazard_y][hazard_x] = 49 + (current_room % 3)
+        hazard[0] = hazard_y
+        hazard[1] = hazard_x   
     
 #########
 ##START##
@@ -1287,3 +1446,8 @@ generate_map()
 clock.schedule_interval(game_loop, 0.03)
 clock.schedule_interval(adjust_wall_transparency, 0.05)
 clock.schedule_unique(display_inventory, 1)
+clock.schedule_unique(draw_energy_air, 0.5)
+clock.schedule_unique(alarm, 10)
+# A higher number below gives a longer time limit.
+sounds.mission.play() # Intro music
+clock.schedule_interval(air_countdown, 5)
