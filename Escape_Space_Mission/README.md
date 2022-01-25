@@ -24,9 +24,9 @@
     <ul>
       <li>Install the game by following the instructions above</li>
       <li>Navigate to the game folder has been downloaded</li>
-      <li>Right-click on <em>Escape Space Mission</em> folder</li>
-      <li>Select <em>New Terminal at folder</em></li>
-      <li></li>
+      <li>Right-click on <strong><em>Escape Space Mission</em></strong> folder</li>
+      <li>Select <strong><em>New Terminal at folder</em></strong></li>
+      <li>Copy and paste into Terminal: <strong>pgzrun escape.py</stron></li>
   </ul>
   </details>
   <details><summary><strong>Run game on Windows</strong></summary>
