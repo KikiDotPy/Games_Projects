@@ -25,6 +25,7 @@
       <li>Install the game by following the instructions above</li>
       <li>Navigate to the folder where the game has been unzipped</li>
       <li>Right-click on <strong><em>Escape Space Mission</em></strong> folder</li>
+      <img src="https://drive.google.com/file/d/1kKA7fnJb0e7olrczBt8ps-d1KaO9euFT/view?usp=sharing">
       <li>Select <strong><em>New Terminal at folder</em></strong></li>
       <li>The Terminal will open, copy and paste into Terminal: <strong>pgzrun escape.py</strong></li>
       <li>Enjoy the game!</li>
