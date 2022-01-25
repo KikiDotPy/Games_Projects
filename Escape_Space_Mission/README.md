@@ -23,9 +23,9 @@
      <details><summary><strong>Run game on MacOS</strong></summary>
     <ul>
       <li>Install the game by following the instructions above</li>
-      <li></li>
-      <li></li>
-      <li></li>
+      <li>Navigate to the game folder has been downloaded</li>
+      <li>Right-click on <em>Escape Space Mission</em> folder</li>
+      <li>Select <em>New Terminal at folder</em></li>
       <li></li>
   </ul>
   </details>
