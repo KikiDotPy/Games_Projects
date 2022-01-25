@@ -2,7 +2,7 @@
 
 > *Escape Space Mission* is a 2D game with a map to explore and puzzles to solve. Developed by following [Mission Python book](https://nostarch.com/missionpython) using Python and Pygame Zero on MacOS.
 
-![alt text](https://ibb.co/47XmHP5)
+![alt text](https://i.ibb.co/mG2D36M/Schermata-2022-01-25-alle-16-28-06.jpg)
   
 ### 👨🏻‍🔧 Installing and Play
 
