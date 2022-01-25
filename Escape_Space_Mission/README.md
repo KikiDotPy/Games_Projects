@@ -40,6 +40,7 @@
 
 - GitHub: [@KikiDotPy](https://github.com/KikiDotPy)
 - Twitter: [@KikiDotPy](https://twitter.com/KikiDotPy)
+- Blog: [KikiDotPy's Journey](https://kikidotpy.hashnode.dev)
 - LinkedIn: [Chiara Di Sano](https://www.linkedin.com/in/chiara-di-sano-94635a226/)
 
 
